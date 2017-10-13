@@ -2,8 +2,28 @@ import csv
 import psycopg2
 import secrets
 
-conn = psycopg2.connect("dbname=weather_data user=cqlanus password=" + secrets.password)
-cur = conn.cursor()
+def parse(filename, dbName):
+    conn = psycopg2.connect("dbname=weather_data user=cqlanus password=" + secrets.password)
+    cur = conn.cursor()
+
+
+    with open(filename, 'rb') as csvfile:
+        rows = csv.reader(csvfile, delimiter=' ')
+        for row in rows:
+            rowStr =  ', '.join(row)
+            formattedRow =  rowStr.replace(' ,', '').split(', ')
+            onlyTemps = formattedRow[2:]
+            tempNums = map(parseTemp, onlyTemps)
+            month = int(formattedRow[1])
+            data = {'stationId': formattedRow[0], 'month': int(formattedRow[1]), 'days': tempNums}
+            print data
+            cur.execute("INSERT INTO " + dbName + " (station_id, month, days) VALUES (%s, %s, %s)",
+                    (formattedRow[0], month, tempNums))
+            conn.commit()
+
+
+    cur.close()
+    conn.close()
 
 def parseTemp(temp):
     if len(temp) == 4:
@@ -11,20 +31,5 @@ def parseTemp(temp):
     elif len(temp) == 5 and temp[0].isdigit():
         return float(temp[0:3] + '.' + temp[3])
 
-with open('dly-tmax-normal.csv', 'rb') as csvfile:
-    rows = csv.reader(csvfile, delimiter=' ')
-    for row in rows:
-        rowStr =  ', '.join(row)
-        formattedRow =  rowStr.replace(' ,', '').split(', ')
-        onlyTemps = formattedRow[2:]
-        tempNums = map(parseTemp, onlyTemps)
-        month = int(formattedRow[1])
-        data = {'stationId': formattedRow[0], 'month': int(formattedRow[1]), 'days': tempNums}
-        print data
-        cur.execute("INSERT INTO daily_max_temps (station_id, month, days) VALUES (%s, %s, %s)",
-                (formattedRow[0], month, tempNums))
-        conn.commit()
-
-
-cur.close()
-conn.close()
+# parse('../data/dly-tmax-normal.csv','daily_max_temps')
+parse('../data/dly-tmin-normal.csv', 'daily_min_temps')
