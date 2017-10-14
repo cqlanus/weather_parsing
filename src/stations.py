@@ -5,7 +5,7 @@ import secrets
 conn = psycopg2.connect("dbname=weather_data user=cqlanus password=" + secrets.password)
 cur = conn.cursor()
 
-with open('../data/stations_list.csv', 'rb') as csvfile:
+with open('../data/stations_list.csv', 'rt') as csvfile:
     rows = csv.reader(csvfile, delimiter=' ')
     for row in rows:
         rowStr =  ','.join(row)

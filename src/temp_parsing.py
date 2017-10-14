@@ -7,18 +7,20 @@ def parse(filename, dbName):
     cur = conn.cursor()
 
 
-    with open(filename, 'rb') as csvfile:
+    with open(filename, 'rt') as csvfile:
         rows = csv.reader(csvfile, delimiter=' ')
         for row in rows:
             rowStr =  ', '.join(row)
             formattedRow =  rowStr.replace(' ,', '').split(', ')
+            stationId = formattedRow[0]
+            wpan = stationId[6:];
             onlyTemps = formattedRow[2:]
-            tempNums = map(parseTemp, onlyTemps)
+            tempNums = list(map(parseTemp, onlyTemps))
             month = int(formattedRow[1])
             data = {'stationId': formattedRow[0], 'month': int(formattedRow[1]), 'days': tempNums}
-            print data
-            cur.execute("INSERT INTO " + dbName + " (station_id, month, days) VALUES (%s, %s, %s)",
-                    (formattedRow[0], month, tempNums))
+            print(data)
+            cur.execute("INSERT INTO " + dbName + " (station_id, wpan, month, days) VALUES (%s, %s, %s, %s)",
+                    (stationId, wpan, month, tempNums))
             conn.commit()
 
 
@@ -31,5 +33,5 @@ def parseTemp(temp):
     elif len(temp) == 5 and temp[0].isdigit():
         return float(temp[0:3] + '.' + temp[3])
 
-# parse('../data/dly-tmax-normal.csv','daily_max_temps')
-parse('../data/dly-tmin-normal.csv', 'daily_min_temps')
+parse('../data/dly-tmax-normal.csv','daily_max_temps')
+# parse('../data/dly-tmin-normal.csv', 'daily_min_temps')
