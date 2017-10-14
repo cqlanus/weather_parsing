@@ -2,8 +2,8 @@ import csv
 import psycopg2
 import secrets
 
-def parse(filename, dbName):
-    conn = psycopg2.connect("dbname=weather_data user=cqlanus password=" + secrets.password)
+def parse(filename, tableName):
+    conn = psycopg2.connect("dbname=gardnly2 user=cqlanus password=" + secrets.password)
     cur = conn.cursor()
 
 
@@ -19,7 +19,7 @@ def parse(filename, dbName):
             month = int(formattedRow[1])
             data = {'stationId': formattedRow[0], 'month': int(formattedRow[1]), 'days': tempNums}
             print(data)
-            cur.execute("INSERT INTO " + dbName + " (station_id, wpan, month, days) VALUES (%s, %s, %s, %s)",
+            cur.execute("INSERT INTO " + tableName + " (station_id, wpan, month, days) VALUES (%s, %s, %s, %s)",
                     (stationId, wpan, month, tempNums))
             conn.commit()
 
@@ -34,4 +34,4 @@ def parseTemp(temp):
         return float(temp[0:3] + '.' + temp[3])
 
 parse('../data/dly-tmax-normal.csv','daily_max_temps')
-# parse('../data/dly-tmin-normal.csv', 'daily_min_temps')
+parse('../data/dly-tmin-normal.csv', 'daily_min_temps')
