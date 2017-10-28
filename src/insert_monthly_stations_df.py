@@ -1,5 +1,6 @@
 import sqlalchemy
 from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -19,16 +20,16 @@ class MonthlyStations(Base):
   id=Column(Integer, primary_key=True)
   station_id=Column(String(255))
   month=Column(Integer)
-  max_temps=Column(Array(Float))
-  min_temps=Column(Array(Float))
-  daily_gdd_40=Column(Array(Integer))
-  daily_gdd_50=Column(Array(Integer))
-  mtd_precip=Column(Array(Float))
-  mtd_snow=Column(Array(Float))
-  ytd_precip=Column(Array(Float))
-  ytd_snow=Column(Array(Float))
-  daily_precip_50=Column(Array(Float))
-  daily_precip_75=Column(Array(Float))
+  max_temps=Column(ARRAY(Float))
+  min_temps=Column(ARRAY(Float))
+  daily_gdd_40=Column(ARRAY(Integer))
+  daily_gdd_50=Column(ARRAY(Integer))
+  mtd_precip=Column(ARRAY(Float))
+  mtd_snow=Column(ARRAY(Float))
+  ytd_precip=Column(ARRAY(Float))
+  ytd_snow=Column(ARRAY(Float))
+  daily_precip_50=Column(ARRAY(Float))
+  daily_precip_75=Column(ARRAY(Float))
 
 
 df = cdf.daily_stations_df()

@@ -55,6 +55,17 @@ def daily_stations_df():
 
     to_merge = [temp_merge, gdd_merge, mtd_merge, ytd_merge, dly_precip_merge]
     merged = functools.reduce(lambda left,right: pd.merge(left,right,on=merge_criteria,how='outer'), to_merge)
+
+    merged.loc[merged['max_temps'].isnull(), ['max_temps']] = merged.loc[merged['max_temps'].isnull(), 'max_temps'].apply(lambda x: [])
+    merged.loc[merged['min_temps'].isnull(), ['min_temps']] = merged.loc[merged['min_temps'].isnull(), 'min_temps'].apply(lambda x: [])
+    merged.loc[merged['daily_gdd_40'].isnull(), ['daily_gdd_40']] = merged.loc[merged['daily_gdd_40'].isnull(), 'daily_gdd_40'].apply(lambda x: [])
+    merged.loc[merged['daily_gdd_50'].isnull(), ['daily_gdd_50']] = merged.loc[merged['daily_gdd_50'].isnull(), 'daily_gdd_50'].apply(lambda x: [])
+    merged.loc[merged['mtd_precip'].isnull(), ['mtd_precip']] = merged.loc[merged['mtd_precip'].isnull(), 'mtd_precip'].apply(lambda x: [])
+    merged.loc[merged['mtd_snow'].isnull(), ['mtd_snow']] = merged.loc[merged['mtd_snow'].isnull(), 'mtd_snow'].apply(lambda x: [])
+    merged.loc[merged['ytd_precip'].isnull(), ['ytd_precip']] = merged.loc[merged['ytd_precip'].isnull(), 'ytd_precip'].apply(lambda x: [])
+    merged.loc[merged['ytd_snow'].isnull(), ['ytd_snow']] = merged.loc[merged['ytd_snow'].isnull(), 'ytd_snow'].apply(lambda x: [])
+    merged.loc[merged['daily_precip_50'].isnull(), ['daily_precip_50']] = merged.loc[merged['daily_precip_50'].isnull(), 'daily_precip_50'].apply(lambda x: [])
+    merged.loc[merged['daily_precip_75'].isnull(), ['daily_precip_75']] = merged.loc[merged['daily_precip_75'].isnull(), 'daily_precip_75'].apply(lambda x: [])
     return merged
     # print(merged[100:110])
 
